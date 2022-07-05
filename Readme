@@ -1,0 +1,2 @@
+This POC contains components of data factory like piplelines, activities, linked services, mappings and so on. 
+This HOS data factory reads JSON file from Azure blob storage and loads it into Azure Cosmo DB.
