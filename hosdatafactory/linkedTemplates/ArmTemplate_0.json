@@ -1,0 +1,404 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "hosdatafactory"
+		},
+		"HosAzureBlobStorageLS_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'HosAzureBlobStorageLS'"
+		},
+		"HosCosmosDbLS_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'HosCosmosDbLS'"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/HosAzureBlobStorageLS')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"connectionString": "[parameters('HosAzureBlobStorageLS_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/HosCosmosDbLS')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "CosmosDb",
+				"typeProperties": {
+					"connectionString": "[parameters('HosCosmosDbLS_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/CosmosDbSqlApiCollection1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "HosCosmosDbLS",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "CosmosDbSqlApiCollection",
+				"schema": {
+					"type": "object",
+					"properties": {
+						"jobId": {
+							"type": "string"
+						},
+						"hybrisOrderId": {
+							"type": "string"
+						},
+						"clientInfo": {
+							"type": "object",
+							"properties": {
+								"lastName": {
+									"type": "string"
+								},
+								"mobilePhone": {
+									"type": "string"
+								},
+								"email": {
+									"type": "string"
+								}
+							}
+						},
+						"pdfMedia": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"linkToAttachment": {
+										"type": "string"
+									},
+									"catalog": {
+										"type": "string"
+									},
+									"uploadedDate": {
+										"type": "string"
+									},
+									"delete": {
+										"type": "string"
+									}
+								}
+							}
+						},
+						"imageMedia": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"linkToAttachment": {
+										"type": "string"
+									},
+									"catalog": {
+										"type": "string"
+									},
+									"uploadedDate": {
+										"type": "string"
+									},
+									"delete": {
+										"type": "string"
+									}
+								}
+							}
+						},
+						"trackingDetails": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"linkToAttachment": {
+										"type": "string"
+									},
+									"catalog": {
+										"type": "string"
+									},
+									"uploadedDate": {
+										"type": "string"
+									},
+									"delete": {
+										"type": "string"
+									}
+								}
+							}
+						},
+						"complaints": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"date": {
+										"type": "string"
+									},
+									"reason": {
+										"type": "string"
+									},
+									"text": {
+										"type": "string"
+									}
+								}
+							}
+						}
+					}
+				},
+				"typeProperties": {
+					"collectionName": "dfcontainer"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/HosCosmosDbLS')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Json1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "HosAzureBlobStorageLS",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "orders.json",
+						"container": "dfblobcontainer"
+					}
+				},
+				"schema": {
+					"type": "object",
+					"properties": {
+						"jobId": {
+							"type": "string"
+						},
+						"hybrisOrderId": {
+							"type": "string"
+						},
+						"clientInfo": {
+							"type": "object",
+							"properties": {
+								"lastName": {
+									"type": "string"
+								},
+								"mobilePhone": {
+									"type": "string"
+								},
+								"email": {
+									"type": "string"
+								}
+							}
+						},
+						"pdfMedia": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"linkToAttachment": {
+										"type": "string"
+									},
+									"catalog": {
+										"type": "string"
+									},
+									"uploadedDate": {
+										"type": "string"
+									},
+									"delete": {
+										"type": "string"
+									}
+								}
+							}
+						},
+						"imageMedia": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"linkToAttachment": {
+										"type": "string"
+									},
+									"catalog": {
+										"type": "string"
+									},
+									"uploadedDate": {
+										"type": "string"
+									},
+									"delete": {
+										"type": "string"
+									}
+								}
+							}
+						},
+						"trackingDetails": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"linkToAttachment": {
+										"type": "string"
+									},
+									"catalog": {
+										"type": "string"
+									},
+									"uploadedDate": {
+										"type": "string"
+									},
+									"delete": {
+										"type": "string"
+									}
+								}
+							}
+						},
+						"complaints": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"date": {
+										"type": "string"
+									},
+									"reason": {
+										"type": "string"
+									},
+									"text": {
+										"type": "string"
+									}
+								}
+							}
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/HosAzureBlobStorageLS')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pipeline1')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "CopydataActivity",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "JsonSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "JsonReadSettings"
+								}
+							},
+							"sink": {
+								"type": "CosmosDbSqlApiSink",
+								"writeBehavior": "insert"
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"path": "$['jobId']"
+										},
+										"sink": {
+											"path": "$['jobId']"
+										}
+									},
+									{
+										"source": {
+											"path": "$['hybrisOrderId']"
+										},
+										"sink": {
+											"path": "$['hybrisOrderId']"
+										}
+									},
+									{
+										"source": {
+											"path": "$['clientInfo']['lastName']"
+										},
+										"sink": {
+											"path": "$['clientInfo']['lastName']"
+										}
+									},
+									{
+										"source": {
+											"path": "$['clientInfo']['mobilePhone']"
+										},
+										"sink": {
+											"path": "$['clientInfo']['mobilePhone']"
+										}
+									},
+									{
+										"source": {
+											"path": "$['clientInfo']['email']"
+										},
+										"sink": {
+											"path": "$['clientInfo']['email']"
+										}
+									}
+								]
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "Json1",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "CosmosDbSqlApiCollection1",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/Json1')]",
+				"[concat(variables('factoryId'), '/datasets/CosmosDbSqlApiCollection1')]"
+			]
+		}
+	]
+}
