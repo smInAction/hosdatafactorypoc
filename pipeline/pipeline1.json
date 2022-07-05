@@ -1,0 +1,96 @@
+{
+	"name": "pipeline1",
+	"properties": {
+		"activities": [
+			{
+				"name": "CopydataActivity",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "JsonSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "JsonReadSettings"
+						}
+					},
+					"sink": {
+						"type": "CosmosDbSqlApiSink",
+						"writeBehavior": "insert"
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"path": "$['jobId']"
+								},
+								"sink": {
+									"path": "$['jobId']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['hybrisOrderId']"
+								},
+								"sink": {
+									"path": "$['hybrisOrderId']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['clientInfo']['lastName']"
+								},
+								"sink": {
+									"path": "$['clientInfo']['lastName']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['clientInfo']['mobilePhone']"
+								},
+								"sink": {
+									"path": "$['clientInfo']['mobilePhone']"
+								}
+							},
+							{
+								"source": {
+									"path": "$['clientInfo']['email']"
+								},
+								"sink": {
+									"path": "$['clientInfo']['email']"
+								}
+							}
+						]
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "Json1",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "CosmosDbSqlApiCollection1",
+						"type": "DatasetReference"
+					}
+				]
+			}
+		],
+		"annotations": []
+	}
+}
