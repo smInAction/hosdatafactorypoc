@@ -112,5 +112,6 @@
 		"typeProperties": {
 			"collectionName": "dfcontainer"
 		}
-	}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
 }
